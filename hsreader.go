@@ -2,9 +2,12 @@ package hsreader
 
 import (
 	"./dbf"
+	"./mahonia"
 	"./txt"
 	"fmt"
 	"path"
+	"strings"
+	"time"
 )
 
 var quoteFields = []string{
@@ -47,46 +50,6 @@ var quoteFields = []string{
 	"sellv5",
 }
 
-// var txtFieldsMap = map[string]string{
-// 	"market",
-// 	"code",
-// 	"name",
-// 	"turnRate", //转手率
-// 	"turnVol",
-// 	"vol",
-// 	"sum",
-// 	"preClose",
-// 	"open",
-// 	"close",
-// 	"high",
-// 	"low",
-// 	"price",
-// 	"status",
-// 	"timeStamp",
-
-// 	"buyp1",
-// 	"buyv1",
-// 	"buyp2",
-// 	"buyv2",
-// 	"buyp3",
-// 	"buyv3",
-// 	"buyp4",
-// 	"buyv4",
-// 	"buyp5",
-// 	"buyv5",
-
-// 	"sellp1",
-// 	"sellv1",
-// 	"sellp2",
-// 	"sellv2",
-// 	"sellp3",
-// 	"sellv3",
-// 	"sellp4",
-// 	"sellv4",
-// 	"sellp5",
-// 	"sellv5",
-// }
-
 func ReadFromFile(filename string) ([]map[string]string, error) {
 	// dbf or txt
 	ext := path.Ext(filename)
@@ -104,7 +67,7 @@ func ReadFromFile(filename string) ([]map[string]string, error) {
 }
 
 func ReadDbfFromFile(filename string) ([]map[string]string, error) {
-	data, err := dbf.FromFile()
+	data, err := dbf.FromFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -140,12 +103,180 @@ func parseShData(data []map[string]string) ([]map[string]string, error) {
 		return nil, fmt.Errorf("parseShData status info no found")
 	}
 
-	return nil, nil
+	t, _ := time.Parse("150405", statusInfo["S2"])
+
+	ctime := t.Format("15:04:05")
+
+	list := []map[string]string{}
+
+	d := mahonia.NewDecoder("gbk")
+
+	for _, item := range data {
+		if item["S1"] == "000000" {
+			continue
+		}
+
+		code := item["S1"]
+		// return nil, nil
+		switch string(code[0:3]) {
+		case "000", "600", "601", "603", "900":
+		default:
+			continue
+		}
+
+		info := parsesFields(item, shfiledsMap)
+		info["market"] = "sh"
+		info["code"] = info["market"] + info["code"]
+		info["timeStamp"] = ctime
+
+		info["name"] = d.ConvertString(info["name"])
+
+		info["status"] = ""
+		if item["delete"] == "1" {
+			info["status"] = "P"
+		}
+
+		list = append(list, info)
+	}
+
+	return list, nil
 }
 
 func parseSzData(data []map[string]string) ([]map[string]string, error) {
 
-	return nil, nil
+	statusInfo := map[string]string{}
+
+	for _, item := range data {
+		if item["HQZQDM"] == "000000" {
+			statusInfo = item
+			break
+		}
+	}
+
+	if len(statusInfo) == 0 {
+		return nil, fmt.Errorf("parseShData status info no found")
+	}
+
+	t, _ := time.Parse("150405", statusInfo["HQCJBS"])
+
+	ctime := t.Format("15:04:05")
+
+	list := []map[string]string{}
+
+	d := mahonia.NewDecoder("gbk")
+
+	for _, item := range data {
+		if item["HQZQDM"] == "000000" {
+			continue
+		}
+
+		code := item["HQZQDM"]
+		// return nil, nil
+		switch string(code[0:3]) {
+		case "000", "300", "002":
+		default:
+			continue
+		}
+
+		info := parsesFields(item, szfiledsMap)
+		info["market"] = "sh"
+		info["code"] = info["market"] + info["code"]
+		info["timeStamp"] = ctime
+
+		info["name"] = d.ConvertString(info["name"])
+
+		info["status"] = ""
+		if item["delete"] == "1" {
+			info["status"] = "P"
+		}
+
+		list = append(list, info)
+	}
+
+	return list, nil
+}
+
+var shfiledsMap = map[string]string{
+	"code":     "S1",
+	"name":     "S2",
+	"vol":      "S11",
+	"sum":      "S5",
+	"preClose": "S3",
+	"open":     "S4",
+	"close":    "S8",
+	"high":     "S6",
+	"low":      "S7",
+	"price":    "S8",
+
+	"buyp1": "S14",
+	"buyv1": "S15",
+	"buyp2": "S16",
+	"buyv2": "S17",
+	"buyp3": "S18",
+	"buyv3": "S19",
+	"buyp4": "S26",
+	"buyv4": "S27",
+	"buyp5": "S28",
+	"buyv5": "S29",
+
+	"sellp1": "S20",
+	"sellv1": "S21",
+	"sellp2": "S22",
+	"sellv2": "S23",
+	"sellp3": "S24",
+	"sellv3": "S25",
+	"sellp4": "S30",
+	"sellv4": "S31",
+	"sellp5": "S32",
+	"sellv5": "S33",
+}
+
+var szfiledsMap = map[string]string{
+	"code":     "HQZQDM",
+	"name":     "HQZQJC",
+	"vol":      "HQCJSL",
+	"sum":      "HQCJJE",
+	"preClose": "HQZRSP",
+	"open":     "HQJRKP",
+	"close":    "S8",
+	"high":     "HQZGCJ",
+	"low":      "HQZDCJ",
+	"price":    "HQZJCJ",
+
+	"buyp1": "HQBJW1",
+	"buyv1": "HQBSL1",
+	"buyp2": "HQBJW2",
+	"buyv2": "HQBSL2",
+	"buyp3": "HQBJW3",
+	"buyv3": "HQBSL3",
+	"buyp4": "HQBJW4",
+	"buyv4": "HQBSL4",
+	"buyp5": "S28",
+	"buyv5": "S29",
+
+	"sellp1": "HQSJW1",
+	"sellv1": "HQSSL1",
+	"sellp2": "HQSJW2",
+	"sellv2": "HQSSL2",
+	"sellp3": "HQSJW3",
+	"sellv3": "HQSSL3",
+	"sellp4": "HQSJW4",
+	"sellv4": "HQSSL4",
+	"sellp5": "S32",
+	"sellv5": "S33",
+}
+
+func parsesFields(item map[string]string, fieldsMap map[string]string) map[string]string {
+	info := map[string]string{}
+	for k, v := range fieldsMap {
+		if _, ok := item[v]; !ok {
+			info[k] = ""
+			continue
+		}
+
+		info[k] = strings.Replace(item[v], "-", "0", -1)
+	}
+	return info
 }
 
 func ReadTxtFromFile(filename string) ([]map[string]string, error) {
