@@ -28,12 +28,22 @@ type TxtContent struct {
 	IndexList []map[string]string
 }
 
+func ReadBytes(data []byte) (contents TxtContent, err error) {
+	return Read(bytes.NewReader(data))
+}
+
 func ReadFile(fpath string) (contents TxtContent, err error) {
 	fp, err := os.OpenFile(fpath, os.O_RDONLY, 0)
 	if err != nil {
 		return
 	}
 	defer fp.Close()
+
+	return Read(fp)
+
+}
+
+func Read(fp io.Reader) (contents TxtContent, err error) {
 
 	header := map[string]string{}
 	footer := map[string]string{}

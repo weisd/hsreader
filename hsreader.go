@@ -50,7 +50,7 @@ import (
 // 	"sellv5",
 // }
 
-func ReadFromFile(filename string) ([]map[string]string, error) {
+func ReadFromBytes(filename string, data []byte) ([]map[string]string, error) {
 	// dbf or txt
 	ext := path.Ext(filename)
 	switch ext {
@@ -66,15 +66,31 @@ func ReadFromFile(filename string) ([]map[string]string, error) {
 
 }
 
-func ReadDbfFromFile(filename string) ([]map[string]string, error) {
-	data, err := dbf.FromFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	if len(data) == 0 {
-		return nil, err
+func ReadFromFile(filename string) ([]map[string]string, error) {
+	// dbf or txt
+	ext := path.Ext(filename)
+	switch ext {
+	case ".txt":
+		return ReadTxtFromFile(filename)
+	case ".dbf":
+		data, err := dbf.FromFile(filename)
+		if err != nil {
+			return nil, err
+		}
+		if len(data) == 0 {
+			return nil, err
+		}
+
+		return parseDbfData(data)
+	default:
+		return nil, fmt.Errorf("file ext not supper")
 	}
 
+	return nil, fmt.Errorf("file ext not supper")
+
+}
+
+func parseDbfData(data []map[string]string) ([]map[string]string, error) {
 	// 是否sh
 	tmp := data[0]
 	if _, ok := tmp["S1"]; ok {
