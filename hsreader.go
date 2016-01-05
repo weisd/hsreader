@@ -1,54 +1,54 @@
 package hsreader
 
 import (
-	"./dbf"
-	"./mahonia"
-	"./txt"
 	"fmt"
+	"github.com/weisd/hsreader/dbf"
+	"github.com/weisd/hsreader/mahonia"
+	"github.com/weisd/hsreader/txt"
 	"path"
 	"strings"
 	"time"
 )
 
-var quoteFields = []string{
-	"market",
-	"code",
-	"name",
-	"turnRate", //转手率
-	"turnVol",
-	"vol",
-	"sum",
-	"preClose",
-	"open",
-	"close",
-	"high",
-	"low",
-	"price",
-	"status",
-	"timeStamp",
+// var quoteFields = []string{
+// 	"market",
+// 	"code",
+// 	"name",
+// 	"turnRate", //转手率
+// 	"turnVol",
+// 	"vol",
+// 	"sum",
+// 	"preClose",
+// 	"open",
+// 	"close",
+// 	"high",
+// 	"low",
+// 	"price",
+// 	"status",
+// 	"timeStamp",
 
-	"buyp1",
-	"buyv1",
-	"buyp2",
-	"buyv2",
-	"buyp3",
-	"buyv3",
-	"buyp4",
-	"buyv4",
-	"buyp5",
-	"buyv5",
+// 	"buyp1",
+// 	"buyv1",
+// 	"buyp2",
+// 	"buyv2",
+// 	"buyp3",
+// 	"buyv3",
+// 	"buyp4",
+// 	"buyv4",
+// 	"buyp5",
+// 	"buyv5",
 
-	"sellp1",
-	"sellv1",
-	"sellp2",
-	"sellv2",
-	"sellp3",
-	"sellv3",
-	"sellp4",
-	"sellv4",
-	"sellp5",
-	"sellv5",
-}
+// 	"sellp1",
+// 	"sellv1",
+// 	"sellp2",
+// 	"sellv2",
+// 	"sellp3",
+// 	"sellv3",
+// 	"sellp4",
+// 	"sellv4",
+// 	"sellp5",
+// 	"sellv5",
+// }
 
 func ReadFromFile(filename string) ([]map[string]string, error) {
 	// dbf or txt
