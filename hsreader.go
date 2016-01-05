@@ -55,9 +55,9 @@ func ReadFromBytes(filename string, data []byte) ([]map[string]string, error) {
 	ext := path.Ext(filename)
 	switch ext {
 	case ".txt":
-		return ReadTxtFromFile(filename)
+		return ReadTxtFromBytes(data)
 	case ".dbf":
-		return ReadDbfFromFile(filename)
+		return ReadDbfFromBytes(data)
 	default:
 		return nil, fmt.Errorf("file ext not supper")
 	}
@@ -73,21 +73,37 @@ func ReadFromFile(filename string) ([]map[string]string, error) {
 	case ".txt":
 		return ReadTxtFromFile(filename)
 	case ".dbf":
-		data, err := dbf.FromFile(filename)
-		if err != nil {
-			return nil, err
-		}
-		if len(data) == 0 {
-			return nil, err
-		}
-
-		return parseDbfData(data)
+		return ReadDbfFromFile(filename)
 	default:
 		return nil, fmt.Errorf("file ext not supper")
 	}
 
 	return nil, fmt.Errorf("file ext not supper")
 
+}
+
+func ReadDbfFromFile(filename string) ([]map[string]string, error) {
+	data, err := dbf.FromFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) == 0 {
+		return nil, err
+	}
+
+	return parseDbfData(data)
+}
+
+func ReadDbfFromBytes(d []byte) ([]map[string]string, error) {
+	data, err := dbf.FromBytes(d)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) == 0 {
+		return nil, err
+	}
+
+	return parseDbfData(data)
 }
 
 func parseDbfData(data []map[string]string) ([]map[string]string, error) {
@@ -295,11 +311,25 @@ func parsesFields(item map[string]string, fieldsMap map[string]string) map[strin
 	return info
 }
 
+func ReadTxtFromBytes(data []byte) ([]map[string]string, error) {
+	contents, err := txt.ReadBytes(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseTxtData(contents)
+}
+
 func ReadTxtFromFile(filename string) ([]map[string]string, error) {
 	contents, err := txt.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
+
+	return parseTxtData(contents)
+}
+
+func parseTxtData(contents txt.TxtContent) ([]map[string]string, error) {
 
 	list := []map[string]string{}
 
