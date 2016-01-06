@@ -77,8 +77,6 @@ func Read(fp io.Reader) (contents TxtContent, err error) {
 		lines = append(lines, line)
 	}
 
-	fmt.Println(len(lines))
-
 	for i, _ := range lines {
 		info := splitLine(lines[i])
 
