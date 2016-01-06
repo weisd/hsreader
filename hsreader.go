@@ -211,7 +211,7 @@ func parseSzData(data []map[string]string) ([]map[string]string, error) {
 		}
 
 		info := parsesFields(item, szfiledsMap)
-		info["market"] = "sh"
+		info["market"] = "sz"
 		info["code"] = info["market"] + info["code"]
 		info["timeStamp"] = ctime
 
