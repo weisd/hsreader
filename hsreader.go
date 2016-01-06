@@ -205,7 +205,7 @@ func parseSzData(data []map[string]string) ([]map[string]string, error) {
 		code := item["HQZQDM"]
 		// return nil, nil
 		switch string(code[0:3]) {
-		case "000", "300", "002":
+		case "000", "300", "002", "399":
 		default:
 			continue
 		}
