@@ -339,8 +339,6 @@ func parseTxtData(contents txt.TxtContent) ([]map[string]string, error) {
 		info["market"] = "sh"
 		info["code"] = info["market"] + item["SecurityID"]
 		info["name"] = item["Symbol"]
-		info["turnRate"] = ""
-		info["turnVol"] = ""
 		info["vol"] = item["TradeVolume"]
 		info["sum"] = item["TotalValueTraded"]
 		info["preClose"] = item["PreClosePx"]
@@ -391,8 +389,6 @@ func parseTxtData(contents txt.TxtContent) ([]map[string]string, error) {
 		info["market"] = "sh"
 		info["code"] = info["market"] + item["SecurityID"]
 		info["name"] = item["Symbol"]
-		info["turnRate"] = ""
-		info["turnVol"] = ""
 		info["vol"] = item["TradeVolume"]
 		info["sum"] = item["TotalValueTraded"]
 		info["preClose"] = item["PreClosePx"]
