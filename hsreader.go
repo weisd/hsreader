@@ -203,7 +203,7 @@ func parseSzData(data []map[string]string) ([]map[string]string, error) {
 
 	t, err := time.Parse("150405", statusInfo["HQCJBS"])
 	if err != nil {
-		fmt.Println("time.Parse(150405, statusInfo[HQCJBS]) %v", err)
+		fmt.Println("time.Parse(150405, statusInfo[HQCJBS])", len(statusInfo["HQCJBS"]), err)
 		err = nil
 	}
 
