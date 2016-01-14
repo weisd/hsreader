@@ -135,7 +135,11 @@ func parseShData(data []map[string]string) ([]map[string]string, error) {
 		return nil, fmt.Errorf("parseShData status info no found")
 	}
 
-	t, _ := time.Parse("150405", statusInfo["S2"])
+	t, err := time.Parse("150405", statusInfo["S2"])
+	if err != nil {
+		fmt.Println("time.Parse(150405, statusInfo[S2]) %v", err)
+		err = nil
+	}
 
 	ctime := t.Format("15:04:05")
 
@@ -189,7 +193,11 @@ func parseSzData(data []map[string]string) ([]map[string]string, error) {
 		return nil, fmt.Errorf("parseShData status info no found")
 	}
 
-	t, _ := time.Parse("150405", statusInfo["HQCJBS"])
+	t, err := time.Parse("150405", statusInfo["HQCJBS"])
+	if err != nil {
+		fmt.Println("time.Parse(150405, statusInfo[HQCJBS]) %v", err)
+		err = nil
+	}
 
 	ctime := t.Format("15:04:05")
 
