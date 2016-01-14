@@ -135,6 +135,10 @@ func parseShData(data []map[string]string) ([]map[string]string, error) {
 		return nil, fmt.Errorf("parseShData status info no found")
 	}
 
+	if len(statusInfo["S2"]) < 6 {
+		statusInfo["S2"] = "0" + statusInfo["S2"]
+	}
+
 	t, err := time.Parse("150405", statusInfo["S2"])
 	if err != nil {
 		fmt.Println("time.Parse(150405, statusInfo[S2]) %v", err)
@@ -191,6 +195,10 @@ func parseSzData(data []map[string]string) ([]map[string]string, error) {
 
 	if len(statusInfo) == 0 {
 		return nil, fmt.Errorf("parseShData status info no found")
+	}
+
+	if len(statusInfo["HQCJBS"]) < 6 {
+		statusInfo["HQCJBS"] = "0" + statusInfo["HQCJBS"]
 	}
 
 	t, err := time.Parse("150405", statusInfo["HQCJBS"])
