@@ -286,7 +286,7 @@ var szfiledsMap = map[string]string{
 	"sum":      "HQCJJE",
 	"preClose": "HQZRSP",
 	"open":     "HQJRKP",
-	"close":    "S8",
+	"close":    "HQZJCJ",
 	"high":     "HQZGCJ",
 	"low":      "HQZDCJ",
 	"price":    "HQZJCJ",
