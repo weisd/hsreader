@@ -123,7 +123,7 @@ func GetRecords(fp Reader) []map[string]string {
 		a := int64(1)
 		for _, val := range fields {
 			fieldlen := val.FieldLen
-			record[val.Name] = strings.Trim(fmt.Sprintf("%s", buf[a:a+fieldlen]), " ")
+			record[val.Name] = strings.TrimSpace(fmt.Sprintf("%s", buf[a:a+fieldlen]))
 			a = a + fieldlen
 		}
 		temp[i] = record
